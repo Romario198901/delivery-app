@@ -3,39 +3,130 @@ import { getAllShops } from "../api/shops";
 import ShopList from "../components/ShopList/ShopList";
 import Pagination from "../components/Pagination/Pagination";
 import { useState } from "react";
-import css from './ShopPage.module.css';
+import css from "./ShopPage.module.css";
+import ProductList from "../components/ProductList/ProductList";
+import { getAllProducts } from "../api/products";
+import type { Product } from "../types/product";
+import Loader from "../components/Loader";
+import Error from "../components/Error";
 
 export default function ShopPage() {
-  const [page, setPage] = useState(1);
-
-  const { data, isLoading, isError } = useQuery({
-    queryKey: ["shops", page],
-    queryFn: () => getAllShops(page),
+  const [shopsPage, setShopsPage] = useState(1);
+  const [productsPage, setProductsPage] = useState(1);
+  const [manualSelectedShopId, setManualSelectedShopId] = useState<
+    string | null
+  >(null);
+  const [categories, setCategories] = useState("");
+  const [sortBy, setSortBy] = useState<"price" | "name" | "">("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const {
+    data: shopsData,
+    isLoading: shopsIsLoading,
+    isError: shopsIsError,
+  } = useQuery({
+    queryKey: ["shops", shopsPage],
+    queryFn: () => getAllShops(shopsPage),
     initialData: {
       shops: [],
       totalPages: 0,
     },
     placeholderData: keepPreviousData,
   });
+  const selectedShopId =
+    manualSelectedShopId ?? shopsData.shops[0]?._id ?? null;
+  const {
+    data: productsData,
+    isLoading: productsIsLoading,
+    isError: productsIsError,
+  } = useQuery({
+    queryKey: [
+      "products",
+      selectedShopId,
+      productsPage,
+      categories,
+      sortBy,
+      sortOrder,
+    ],
+    queryFn: () =>
+      getAllProducts({
+        page: productsPage,
+        shopId: selectedShopId ?? undefined,
+        categories: categories || undefined,
+        sortBy: sortBy || undefined,
+        sortOrder,
+      }),
+    enabled: !!selectedShopId,
+    initialData: {
+      products: [],
+      totalPages: 0,
+    },
+    placeholderData: keepPreviousData,
+  });
+  const handleSelectShop = (shopId: string) => {
+    setManualSelectedShopId(shopId);
+    setProductsPage(1);
+  };
+
+  const handleAddToCart = (product: Product) => {
+    console.log("Add to cart:", product);
+    // тут потім буде логіка кошика
+  };
+
+  const handleResetFilters = () => {
+    setCategories("");
+    setSortBy("");
+    setSortOrder("asc");
+    setProductsPage(1);
+  };
+
   return (
     <section className={css.page}>
-    <div className={css.layout}>
-    <div className={css.sidebar}>
-      {data.shops.length > 0 && !isLoading && !isError && (
-        <ShopList shops={data.shops} />
-      )}
-      {data.totalPages > 1 && (
-        <Pagination
-          page={page}
-          totalPages={data.totalPages}
-          onChange={setPage}
-        />
-      )}
-    </div>
-    <div className={css.content}>
-
-    </div>
-    </div>
+      <div className={css.layout}>
+        <div className={css.sidebar}>
+          {shopsIsLoading && <Loader />}
+          {shopsIsError && <Error />}
+          {shopsData.shops.length > 0 && !shopsIsLoading && !shopsIsError && (
+            <ShopList
+              shops={shopsData.shops}
+              selectedShopId={selectedShopId}
+              onSelectShop={handleSelectShop}
+            />
+          )}
+          {shopsData.totalPages > 1 && (
+            <Pagination
+              page={shopsPage}
+              totalPages={shopsData.totalPages}
+              onChange={setShopsPage}
+            />
+          )}
+        </div>
+        <div className={css.content}>
+          {productsIsLoading && <Loader />}
+          {productsIsError && <Error />}
+          {productsData.products.length > 0 &&
+            !productsIsError &&
+            !productsIsLoading && (
+              <ProductList
+                products={productsData.products}
+                categories={categories}
+                sortBy={sortBy}
+                sortOrder={sortOrder}
+                onCategoriesChange={setCategories}
+                onSortByChange={setSortBy}
+                onSortOrderChange={setSortOrder}
+                onResetFilters={handleResetFilters}
+                onAddToCart={handleAddToCart}
+              ></ProductList>
+            )}
+          {productsData.totalPages > 1 && (
+            <Pagination
+              page={productsPage}
+              totalPages={productsData.totalPages}
+              onChange={setProductsPage}
+            />
+          )}
+        </div>
+      </div>
     </section>
   );
 }

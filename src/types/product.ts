@@ -4,6 +4,7 @@ export interface Product {
   price: number;
   image: string;
   category: ProductCategories;
+  shopId?: string;
 }
 export type ProductCategories =
   | "Burgers"
