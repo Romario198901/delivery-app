@@ -40,8 +40,8 @@ export default function CartPage() {
 
     createMutation.mutate({
       customerName: values.customerName,
-      email: values.email,
-      phone: values.phone,
+      email: values.email.trim().toLowerCase(),
+      phone: values.phone.trim(),
       address: values.address,
       items: items.map((item) => ({
         productId: item._id,
