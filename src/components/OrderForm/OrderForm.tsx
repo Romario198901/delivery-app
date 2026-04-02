@@ -58,6 +58,7 @@ export default function OrderForm({
       onSubmit={(values, actions) => {
         onSubmit(values);
         actions.setSubmitting(false);
+        actions.resetForm();
       }}
     >
       <Form className={css.form}>
