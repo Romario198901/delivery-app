@@ -9,6 +9,8 @@ import { getAllProducts } from "../api/products";
 import type { Product } from "../types/product";
 import Loader from "../components/Loader";
 import Error from "../components/Error";
+import { useCartStore } from "../store/cartStore";
+import toast from "react-hot-toast";
 
 export default function ShopPage() {
   const [shopsPage, setShopsPage] = useState(1);
@@ -19,6 +21,8 @@ export default function ShopPage() {
   const [categories, setCategories] = useState("");
   const [sortBy, setSortBy] = useState<"price" | "name" | "">("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const addToCart = useCartStore((state) => state.addToCart);
+
   const {
     data: shopsData,
     isLoading: shopsIsLoading,
@@ -34,6 +38,7 @@ export default function ShopPage() {
   });
   const selectedShopId =
     manualSelectedShopId ?? shopsData.shops[0]?._id ?? null;
+
   const {
     data: productsData,
     isLoading: productsIsLoading,
@@ -68,8 +73,8 @@ export default function ShopPage() {
   };
 
   const handleAddToCart = (product: Product) => {
-    console.log("Add to cart:", product);
-    // тут потім буде логіка кошика
+    addToCart(product);
+    toast.success(`${product.name} added to cart`);
   };
 
   const handleResetFilters = () => {

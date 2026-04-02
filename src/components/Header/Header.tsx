@@ -1,19 +1,20 @@
+import { Link } from "react-router-dom";
 import css from "./Header.module.css";
 
 export default function Header() {
   return (
     <header className={css.header}>
       <div className={css.inner}>
-        <a href="/" className={css.logo}>
+        <Link to="/" className={css.logo}>
           DELIVERY APP
-        </a>
+        </Link>
         <nav className={css.nav}>
-          <a href="/" className={css.link}>
+          <Link to="/" className={css.link}>
             Shop
-          </a>
-          <a href="/" className={css.link}>
+          </Link>
+          <Link to="/cart" className={css.link}>
             Shopping Cart
-          </a>
+          </Link>
         </nav>
       </div>
     </header>
