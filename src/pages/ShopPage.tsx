@@ -108,9 +108,6 @@ export default function ShopPage() {
         <div className={css.content}>
           {productsIsLoading && <Loader />}
           {productsIsError && <Error />}
-          {productsData.products.length > 0 &&
-            !productsIsError &&
-            !productsIsLoading && (
               <ProductList
                 products={productsData.products}
                 categories={categories}
@@ -122,7 +119,6 @@ export default function ShopPage() {
                 onResetFilters={handleResetFilters}
                 onAddToCart={handleAddToCart}
               ></ProductList>
-            )}
           {productsData.totalPages > 1 && (
             <Pagination
               page={productsPage}

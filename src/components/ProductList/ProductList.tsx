@@ -61,13 +61,20 @@ export default function ProductList({
           Reset filters
         </button>
       </div>
-      <ul className={css.grid}>
-        {products.map((product) => (
-          <li key={product._id}>
-            <ProductCard product={product} onAddToCart={onAddToCart} />{" "}
-          </li>
-        ))}
-      </ul>
+      {products.length > 0 ? (
+        <ul className={css.grid}>
+          {products.map((product) => (
+            <li key={product._id}>
+              <ProductCard product={product} onAddToCart={onAddToCart} />{" "}
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className={css.empty}>
+          Unfortunately, there are no products in this category try to change or
+          reset filters
+        </div>
+      )}
     </div>
   );
 }

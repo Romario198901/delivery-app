@@ -44,7 +44,14 @@
   border-radius: 8px;
   background-color: #fff;
 }
-
+.quantityInput {
+  width: 100px;
+  padding: 4px;
+border: 1px solid var(--color-border);
+  border-radius: 2px;
+  outline: none;
+  transition: border-color var(--transition);
+}
 .removeBtn {
   border: none;
   background: transparent;

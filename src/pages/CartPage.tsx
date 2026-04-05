@@ -14,6 +14,7 @@ export default function CartPage() {
     items,
     increaseQuantity,
     decreaseQuantity,
+    updateQuanttity,
     removeFromCart,
     clearCart,
   } = useCartStore();
@@ -30,7 +31,6 @@ export default function CartPage() {
     onError: () => {
       toast.error("Failed to create order");
     },
-  
   });
   const handleSubmitOrder = async (values: OrderFormValues) => {
     if (items.length === 0) {
@@ -71,6 +71,7 @@ export default function CartPage() {
                   <CartItem
                     key={item._id}
                     item={item}
+                    updateQuantity={updateQuanttity}
                     onIncrease={increaseQuantity}
                     onDecrease={decreaseQuantity}
                     onRemove={removeFromCart}
