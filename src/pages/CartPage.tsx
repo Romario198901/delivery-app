@@ -8,25 +8,27 @@ import { calcTotal } from "../utils/calcTotal";
 import css from "./CartPage.module.css";
 import { createOrder } from "../api/orders";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 export default function CartPage() {
   const {
     items,
     increaseQuantity,
     decreaseQuantity,
-    updateQuanttity,
+    setQuanttity,
     removeFromCart,
     clearCart,
   } = useCartStore();
   const total = calcTotal(items);
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
   const createMutation = useMutation({
     mutationFn: createOrder,
     onSuccess: async () => {
       toast.success("Order created");
       await queryClient.invalidateQueries({ queryKey: ["orders"] });
       clearCart();
+      navigate("/");
     },
     onError: () => {
       toast.error("Failed to create order");
@@ -51,6 +53,7 @@ export default function CartPage() {
       })),
       totalPrice: total,
     });
+    clearCart();
   };
   return (
     <section className={css.page}>
@@ -71,7 +74,7 @@ export default function CartPage() {
                   <CartItem
                     key={item._id}
                     item={item}
-                    updateQuantity={updateQuanttity}
+                    updateQuantity={setQuanttity}
                     onIncrease={increaseQuantity}
                     onDecrease={decreaseQuantity}
                     onRemove={removeFromCart}

@@ -4,7 +4,7 @@ import css from "./CartItem.module.css";
 
 interface CartItemProps {
   item: CardProduct;
-  updateQuantity: (productId: string,value: number) => void;
+  updateQuantity: (productId: string, quantity: number) => void;
   onIncrease: (prouctId: string) => void;
   onDecrease: (productId: string) => void;
   onRemove: (productId: string) => void;
@@ -14,27 +14,34 @@ export default function CartItem({
   onIncrease,
   onDecrease,
   onRemove,
-  updateQuantity
+  updateQuantity,
 }: CartItemProps) {
- const [localQty, setLocalQty] = useState<string | null>(null);
-const displayQty = localQty ?? String(item.quantity);
+  const [isEditing, setIsEditing] = useState(false);
+  const [draftQty, setDraftQty] = useState(String(item.quantity));
 
-const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-if (/^\d*$/.test(value)) {
-    setLocalQty(value);
-  }
-};
+  const startEditing = () => {
+    setDraftQty(String(item.quantity));
+    setIsEditing(true);
+  };
 
-const handleBlur = () => {
-  const num = Number(localQty);
-  if (!localQty || isNaN(num) || num < 1) {
-    setLocalQty("1");
-    updateQuantity(item._id, 1);
-    return;
-  }
-  updateQuantity(item._id, num);
-};
+  const commitDraft = () => {
+    const quantity = Number(draftQty);
+
+    if (!draftQty || Number.isNaN(quantity) || quantity < 1) {
+      setDraftQty(String(item.quantity));
+      setIsEditing(false);
+      return;
+    }
+
+    updateQuantity(item._id, quantity);
+    setIsEditing(false);
+  };
+
+  const cancelDraft = () => {
+    setDraftQty(String(item.quantity));
+    setIsEditing(false);
+  };
+
   return (
     <li className={css.item}>
       <img
@@ -56,15 +63,34 @@ const handleBlur = () => {
         >
           -
         </button>
-        <input
-          type="text"
-          inputMode="numeric"
-          value={displayQty}
-          onChange={handleChange}
-          onBlur={handleBlur}
-          className={css.quantityInput}
-        /> <span>{displayQty || 1}</span>
-       
+        {isEditing ? (
+          <input
+            type="text"
+            inputMode="numeric"
+            value={draftQty}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^\d*$/.test(value)) {
+                setDraftQty(value);
+              }
+            }}
+            onBlur={commitDraft}
+            onKeyDown={(e) => {
+              if(e.key === 'Enter') commitDraft();
+              if(e.key === 'Escape') cancelDraft();
+            }}
+            className={css.quantityInput}
+            autoFocus
+          />
+        ) : (
+          <button
+            type="button"
+            className={css.quantityValue}
+            onClick={startEditing}
+          >
+            {item.quantity}
+          </button>
+        )}
 
         <button
           className={css.qtyBtn}
