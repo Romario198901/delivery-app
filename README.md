@@ -1,128 +1,84 @@
-# 🍔 Delivery App
+﻿# Delivery App
 
-Full-stack food delivery application built with **React, Node.js, Express, MongoDB**.
-
----
+A React + TypeScript food delivery storefront that fetches shops and products, manages a shopping cart, and submits orders.
 
 ## 🚀 Features
 
-- 🏪 Browse shops
-- 🍕 View products by shop
-- 🔍 Filtering & sorting
-- 🛒 Add to cart (persisted in localStorage)
-- ➕ Increase / decrease product quantity
-- ❌ Remove items from cart
-- 📦 Create order
-- 📱 Responsive UI
+- Browse shops with pagination
+- View products by selected shop
+- Filter products by category
+- Sort products by name or price
+- Add products to cart with quantity controls
+- Persist cart state in localStorage
+- Submit orders through checkout form
+- Responsive UI powered by Vite and React Router
 
----
+## 🧱 Tech stack
 
-## 🧱 Tech Stack
-
-### Frontend
-- React
+- React 19
 - TypeScript
 - Vite
+- React Router v7
 - React Query
-- Zustand (state + localStorage)
-- React Router
-- Formik + Yup
+- Zustand
 - Axios
+- Formik + Yup
+- react-hot-toast
 
-### Backend
-- Node.js
-- Express
-- MongoDB (Mongoose)
-- Joi / Celebrate validation
+## 📁 Project structure
 
----
+- `src/api/` — API client and request helpers
+- `src/components/` — reusable UI components
+- `src/pages/` — page-level views (`ShopPage`, `CartPage`)
+- `src/store/` — Zustand cart store
+- `src/types/` — shared data types
+- `src/utils/` — utility functions
 
-## 📂 Project Structure
-
-src/
-api/
-components/
-pages/
-store/
-types/
-utils/
-
-
-## ⚙️ Installation
-
-### 1. Clone repo
+## ⚙️ Setup
 
 ```bash
-git clone <your-repo-url>
-cd delivery-app
-
-Install dependencies
+cd "c:\Users\user\Documents\GoIt projects\delivery-app"
 npm install
-
- Run frontend
 npm run dev
+```
 
-📡 API Endpoints
-Shops
-GET /delivery-app/shops
-Products
-GET /delivery-app/products
-Orders
-POST /delivery-app/orders
+Open the local Vite URL shown in the terminal (usually `http://localhost:5173`).
 
+## 📦 Available scripts
 
+- `npm run dev` — start development server
+- `npm run build` — build production assets
+- `npm run preview` — locally preview the production build
+- `npm run lint` — lint source files with ESLint
 
-📦 Order Payload Example
-{
-  "customerName": "John Doe",
-  "email": "john@example.com",
-  "phone": "+380671234567",
-  "address": "Kyiv, Ukraine",
-  "items": [
-    {
-      "productId": "6870...",
-      "name": "Burger",
-      "price": 120,
-      "quantity": 2
-    }
-  ],
-  "totalPrice": 240
-}
+## 🌐 Backend API
 
+The app uses a configured backend base URL in `src/api/axios.ts`:
 
-🧠 Architecture
-ShopPage — data fetching + filters
-ProductList — UI + controls
-ProductCard — single product
-CartPage — order creation
-OrderForm — user data only
-zustand — cart state + localStorage
-💾 State Management
+```ts
+baseURL: "https://delivery-app-server-oq2h.onrender.com/delivery-app",
+```
 
-Cart is stored using Zustand + persist middleware:
+### Endpoints used
 
-Automatically saves to localStorage
-Restores state on reload
-No manual storage logic needed
-🛣 Routing
-/        → ShopPage
-/cart    → CartPage
+- `GET /delivery-app/shops` — fetch paginated shops
+- `GET /delivery-app/products` — fetch paginated products with filters and sorting
+- `POST /delivery-app/orders` — submit a new order
 
+## 🛒 Cart behavior
 
+- Uses Zustand with persist middleware
+- Saves cart state to `localStorage`
+- Restores cart after page reloads
+- Supports item quantity changes and removal
 
-⚠️ Known Issues
-Images may fallback if URL is invalid
-No authentication (by design)
-No admin panel
-📌 Future Improvements
-🔐 Authentication
-🧾 Order history
-💳 Payment integration
-🔎 Search
-⭐ Ratings
+## 🛣️ App routes
 
-👨‍💻 Author
-Roman Hrydyn
+- `/` — Shop page with shop list, product list, filters, and add-to-cart actions
+- `/cart` — Cart page with order form and checkout
 
-📄 License
-MIT
+## 💡 Notes
+
+- The cart is stored locally and survives refreshes.
+- The app relies on the configured backend API.
+- To use a different backend, update `src/api/axios.ts`.
